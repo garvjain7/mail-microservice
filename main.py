@@ -88,6 +88,9 @@ class VerifyPayload(BaseModel):
 
 
 # ── Endpoints ─────────────────────────────────────────────────────────────────
+@app.get("/")
+def home():
+    return {"status": "running", "service": "codealive mail microservice"}
 
 @app.get("/health")
 def health():
