@@ -86,6 +86,12 @@ class VerifyPayload(BaseModel):
     to: str
     token: str
 
+class WorkshopInvitePayload(BaseModel):
+    to: str
+    room_title: str
+    room_url: str
+    host_name: str
+
 
 # ── Endpoints ─────────────────────────────────────────────────────────────────
 @app.get("/")
@@ -159,6 +165,31 @@ Please verify your email address by clicking the link below:
 {verify_link}
 
 The link will expire in 24 hours.
+
+Best,
+The CodeAlive Team"""
+
+    ok = _send(payload.to, subject, body)
+    if not ok:
+        raise HTTPException(500, "Failed to send email")
+    return {"ok": True}
+
+
+@app.post("/send/workshop-invite")
+def send_workshop_invite(payload: WorkshopInvitePayload, x_api_key: str = Header(...)):
+    verify_api_key(x_api_key)
+
+    subject = f"Invitation to Workshop: {payload.room_title} 🚀"
+    body = f"""Hi there,
+
+{payload.host_name} has invited you to join a real-time collaborative coding workshop on CodeAlive.
+
+Workshop Title: {payload.room_title}
+Join here: {payload.room_url}
+
+In this workshop, you'll be able to code together in real-time, share insights, and build together.
+
+Note: You must be logged into your CodeAlive account to join.
 
 Best,
 The CodeAlive Team"""
